@@ -1,0 +1,13 @@
+_target_: pytorch_lightning.Trainer
+accumulate_grad_batches: 1
+min_epochs: 1
+max_epochs: -1
+max_steps: 600000
+deterministic: warn
+accelerator: gpu
+devices: -1
+strategy: ddp_find_unused_parameters_true  # not sure why... ?
+check_val_every_n_epoch: null
+val_check_interval: 5000
+default_root_dir: .
+profiler: false

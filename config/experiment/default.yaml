@@ -1,0 +1,4 @@
+# the default configuration will train Universe++ on
+# 16 kHz Voicebank-DEMAND dataset
+defaults:
+    - _self_

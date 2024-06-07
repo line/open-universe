@@ -1,0 +1,26 @@
+# @package _global_
+
+# configuration to train the original Universe model on
+# 16 kHz Voicebank-DEMAND dataset
+defaults:
+  - _self_
+  - override /datamodule: default
+  - override /model: universepp_24k
+  - override /trainer: default
+
+model:
+  training:
+    audio_len: ${datamodule.datasets.vb-train-24k.audio_len}
+
+datamodule:
+  train:
+    dataset: vb-train-24k
+  val:
+    dataset: vb-val-24k
+  test:
+    dataset: vb-test-24k
+
+trainer:
+  # for GANs, pytorch-lightning counts steps for both optimizers
+  # so that the total number of training steps should be doubled
+  max_steps: 600000  # == 300000 actual steps

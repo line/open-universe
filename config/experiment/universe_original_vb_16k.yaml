@@ -1,0 +1,12 @@
+# @package _global_
+
+# configuration to train the original Universe model on
+# 16 kHz Voicebank-DEMAND dataset
+defaults:
+  - _self_
+  - override /datamodule: default
+  - override /model: universe_original
+  - override /trainer: default
+
+trainer:
+  max_steps: 300000  # actual steps because not GAN

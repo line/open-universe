@@ -1,0 +1,60 @@
+_target_: open_universe.datasets.DataModule
+train:
+    dataset: vb-train-16k
+    dl_opts:
+        pin_memory: true
+        num_workers: 6
+        shuffle: true
+        batch_size: 10  # == 40 with 4 GPUs
+val:
+    dataset: vb-val-16k
+    dl_opts:
+        pin_memory: true
+        num_workers: 4
+        shuffle: false
+        batch_size: 1
+test:
+    dataset: vb-test-16k
+    dl_opts:
+        pin_memory: true
+        num_workers: 4
+        shuffle: false
+        batch_size: 1
+
+datasets:
+    vb-train-16k:
+        _target_: open_universe.datasets.NoisyDataset
+        audio_path: data/voicebank_demand/16k
+        fs: 16000
+        split: train
+        audio_len: 2.0
+    vb-val-16k:
+        _target_: open_universe.datasets.NoisyDataset
+        audio_path: ${..vb-train-16k.audio_path}
+        fs: ${..vb-train-16k.fs}
+        split: val
+        audio_len: null
+    vb-test-16k:
+        _target_: open_universe.datasets.NoisyDataset
+        audio_path: ${..vb-train-16k.audio_path}
+        fs: ${..vb-train-16k.fs}
+        split: test
+        audio_len: null
+    vb-train-24k:
+        _target_: open_universe.datasets.NoisyDataset
+        audio_path: data/voicebank_demand/24k
+        fs: 24000
+        split: train
+        audio_len: 2.0
+    vb-val-24k:
+        _target_: open_universe.datasets.NoisyDataset
+        audio_path: ${..vb-train-24k.audio_path}
+        fs: ${..vb-train-24k.fs}
+        split: val
+        audio_len: null
+    vb-test-24k:
+        _target_: open_universe.datasets.NoisyDataset
+        audio_path: ${..vb-train-24k.audio_path}
+        fs: ${..vb-train-24k.fs}
+        split: test
+        audio_len: null

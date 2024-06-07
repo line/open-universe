@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61", "setuptools_scm[toml]>=6.2"]
+
+[project]
+name="open_universe"
+dynamic = ["version", "dependencies"]
+description="Universal speech enhancement with the UNIVERSE++ model."
+readme = {file = 'README.md', content-type='text/markdown'}
+authors=[
+{"name" = "Robin Scheibler", "email" ="robin.scheibler@lycorp.co.jp"},
+]
+requires-python = ">=3.7"
+classifiers=[
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Multimedia :: Sound/Audio",
+  "License :: OSI Approved :: Apache Software License",
+]
+keywords=["speech enhancement", "audio", "speech", "diffusion", "universe"]
+
+[tool.setuptools]
+packages = ["open_universe"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[tool.setuptools_scm]
+version_file = "open_universe/_version.py"

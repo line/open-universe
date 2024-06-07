@@ -1,0 +1,62 @@
+# Low Rank Adaptation of Universe model
+_target_: open_universe.networks.universe.UniverseLoRA
+
+# path to the checkpoint to fine-tune
+model: exp/experiment_name/datetime/checkpoints/step-number.ckpt
+
+# this should match the sampling frequency of the checkpoint
+fs: 24000
+
+n_steps_backprop: 2
+use_lora: true
+use_lora_score: true
+use_lora_condition: true
+lora_rank: 16
+lora_alpha: 4.0  # set to first value of lora_rank used for tuning
+lora_train_biases: true
+
+# use the pre-trained hifi-gan loss
+use_hifigan_loss: true
+weight_hifigan_loss: 0.01
+
+diffusion:
+  n_steps: 8
+  epsilon: 1.3
+
+training:
+    audio_len: ${datamodule.datasets.vctk-train-16k.audio_len}
+    ema_decay: 0.999
+
+losses:
+  multires_l1:
+    weight: 0.1
+    kwargs:
+      _target_: lyse.losses.MultiResL1SpecLoss
+      window_sz: [256, 1024, 2048]
+      time_domain_weight: 0.0
+  phonemeloss:
+    weight: 0.01
+    kwargs:
+      _target_: lyse.losses.PhonemeCTCLoss
+      sr: ${....fs}
+
+validation:
+  main_loss: "val/multires_l1"
+  main_loss_mode: min
+  max_enh_batches: 4
+  num_tb_samples: 0
+  enh_losses:
+    val/:
+      _target_: lyse.metrics.EvalMetrics
+      audio_fs: ${....fs}
+
+optimizer:
+    _target_: torch.optim.Adam
+    lr: 0.00001
+    weight_decay: 0.0001
+
+scheduler: null
+
+grad_clipper:
+    _target_: lyse.utils.FixedClipper
+    max_norm: 5.0

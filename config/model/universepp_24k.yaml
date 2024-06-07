@@ -1,0 +1,122 @@
+# configuration for Universe++ network with HiFi-GAN loss at 24 kHz
+_target_: open_universe.networks.universe.UniverseGAN
+
+fs: 24000
+
+normalization_norm: 2
+normalization_kwargs:
+  ref: both
+  level_db: -26.0
+
+edm:
+  noise: 0.25
+
+score_model:
+  _target_: open_universe.networks.universe.ScoreNetwork
+  fb_kernel_size: 3
+  rate_factors: [2, 3, 5, 8]
+  n_channels: 48
+  n_rff: 32
+  noise_cond_dim: 512
+  encoder_gru_conv_sandwich: false
+  extra_conv_block: true
+  decoder_act_type: prelu
+  use_weight_norm: true
+  use_antialiasing: true
+  time_embedding: simple
+
+condition_model:
+  _target_: open_universe.networks.universe.ConditionerNetwork
+  fb_kernel_size: ${model.score_model.fb_kernel_size}
+  rate_factors: ${model.score_model.rate_factors}
+  n_channels: ${model.score_model.n_channels}
+  n_mels: 128
+  n_mel_oversample: 4
+  encoder_gru_residual: true
+  extra_conv_block: ${model.score_model.extra_conv_block}
+  decoder_act_type: prelu
+  use_weight_norm: ${model.score_model.use_weight_norm}
+  use_antialiasing: false
+
+diffusion:
+  schedule: geometric
+  sigma_min: 0.0005
+  sigma_max: 5.0
+  n_steps: 8
+  epsilon: 1.3
+
+losses:
+  multi_period_discriminator:
+    mpd_reshapes: [2, 3, 5, 7, 11]
+    use_spectral_norm: false
+    discriminator_channel_mult: 1
+  multi_resolution_discriminator:
+    resolutions: [[1024, 120, 600], [2048, 240, 1200], [512, 50, 240]]
+    use_spectral_norm: false
+    discriminator_channel_mult: 1
+  disc_freeze_step: 0
+  weights:
+    mel_l1: 45.0
+    score: 1.0
+  use_signal_decoupling: true
+  signal_decoupling_act: snake
+  score_loss:
+    _target_: torch.nn.MSELoss
+
+training:
+  audio_len: ${datamodule.datasets.distorted-speech.speech_len}
+  time_sampling: time_normal_0.95
+  dynamic_mixing: false
+  ema_decay: 0.999
+
+validation:
+  main_loss: val/pesq
+  main_loss_mode: max
+  n_bins: 5
+  max_enh_batches: 4
+  enh_losses:
+    val/:
+      _target_: open_universe.metrics.EvalMetrics
+      audio_fs: ${model.fs}
+
+optimizer:
+  accumulate_grad_batches: 1
+  generator:
+    _target_: torch.optim.AdamW
+    lr: 0.0001
+    weight_decay: 0.01
+    betas: [0.8, 0.99]
+    weight_decay_exclude: [prelu, bias]
+  discriminator:
+    _target_: torch.optim.AdamW
+    lr: 0.0001
+    betas: [0.8, 0.99]
+  grad_clip_vals:
+    mrd: 1000.0
+    mpd: 1000.0
+    score: 1000.0
+    cond: 1000.0
+
+scheduler:
+  generator:
+    scheduler:
+      _target_: open_universe.utils.schedulers.LinearWarmupCosineAnnealingLR
+      T_warmup: 50000
+      T_cosine: 2000001
+      eta_min: 1.6e-06
+      T_max: ${trainer.max_steps}
+    interval: step
+    frequency: 1
+  discriminator:
+    scheduler:
+      _target_: open_universe.utils.schedulers.LinearWarmupCosineAnnealingLR
+      T_warmup: 50000
+      T_cosine: 2000001
+      eta_min: 1.6e-06
+      T_max: ${trainer.max_steps}
+    interval: step
+    frequency: 1
+
+grad_clipper:
+  _target_: open_universe.utils.FixedClipper
+  max_norm: 1000.0

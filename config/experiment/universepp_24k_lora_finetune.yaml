@@ -1,0 +1,19 @@
+# @package _global_
+
+defaults:
+  - _self_
+  - override /datamodule: default
+  - override /model: universe_lora
+  - override /trainer: default
+
+model:
+  fs: 24000
+
+datamodule:
+  train:
+    dl_opts:
+      batch_size: 4
+
+trainer:
+  val_check_interval: 10000
+  max_steps: 100000

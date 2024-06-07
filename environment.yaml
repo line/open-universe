@@ -1,0 +1,53 @@
+name: open-universe
+channels:
+  - pytorch
+  - nvidia
+dependencies:
+  - python=3.10
+  - pytorch=2.0.1
+  - pytorch-cuda=11.7
+  - torchvision=0.15.2
+  - torchaudio=2.0.2
+  - tensorboard
+  - numpy
+  - matplotlib
+  - seaborn
+  - ipython
+  - pytest
+  - sox
+  - mkl==2024.0  # fix for bug: https://github.com/pytorch/pytorch/issues/123097
+  - pip
+  - pip:
+      - scipy>=1.5.0
+      - pandas
+      - tqdm
+      - pytorch-lightning
+      - pyroomacoustics
+      - PyYAML
+      - rich
+      - tabulate
+      - librosa
+      - hydra-core
+      - hydra-joblib-launcher
+      - onnxruntime
+      - webdataset
+      - soundfile
+      - pesq
+      - auraloss
+      - torch_ema
+      - pedalboard
+      - gradio
+      - fast_bss_eval
+      - einops
+      - jinja2
+      - joblib
+      - omegaconf
+      - pystoi
+      - setuptools
+      - soxr
+      - sympy
+      - huggingface_hub
+      - transformers
+      - speechmos
+      - python-Levenshtein
+      - phonemizer
