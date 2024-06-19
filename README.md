@@ -1,6 +1,6 @@
 # open-universe
 
-This repository contains the code for the [UNIVERSE](https://arxiv.org/abs/2206.03065) and [UNIVERSE++](tba)
+This repository contains the code for the [UNIVERSE](https://arxiv.org/abs/2206.03065) and [UNIVERSE++](https://arxiv.org/abs/2406.12194)
 universal speech enhancement models.
 
 ## Quick Start
