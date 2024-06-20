@@ -3,6 +3,8 @@
 This repository contains the code for the [UNIVERSE](https://arxiv.org/abs/2206.03065) and [UNIVERSE++](https://arxiv.org/abs/2406.12194)
 universal speech enhancement models.
 
+Audio samples of the models on various test sets are available [here](https://fakufaku.github.io/interspeech2024-universepp-samples/).
+
 ## Quick Start
 
 Setup the environment with conda.
