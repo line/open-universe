@@ -114,7 +114,7 @@ def load_model(ckpt_path, device=None, strict=True, return_config=False, hf_toke
     model = instantiate(config.model, _recursive_=False)
     model = model.to(device)
 
-    data = torch.load(ckpt_path, map_location=device)
+    data = torch.load(ckpt_path, map_location=device, weights_only=False)
 
     if hasattr(model, "ema") and "ema" in data:
         model.ema.load_state_dict(data["ema"])
